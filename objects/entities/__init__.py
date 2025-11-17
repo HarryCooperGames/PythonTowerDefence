@@ -1,2 +1,1 @@
-from .enemy import *
-from .tower import *
+from . import enemy, tower

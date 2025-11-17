@@ -1,1 +1,1 @@
-from .objects import *
+from . import objects

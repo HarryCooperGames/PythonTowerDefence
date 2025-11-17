@@ -1,6 +1,6 @@
 import pygame
 
-from objects.object import Object  # absolute import from parent package
+from objects.object import *
 
 class Tower(Object):
     def __init__(self, x, y, w, h, colour, cost, damage, attack_speed):

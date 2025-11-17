@@ -4,8 +4,12 @@ import pygame
 from pygame import *
 import math
 from pygame import mixer
-from objects import *
 from colours import *
+
+from objects.user_interface.box import Box
+from objects.user_interface.text import Text
+from objects.entities.enemy import Enemy
+from objects.entities.tower import Tower
 #initialise pygame
 pygame.init()
 #initialise music mixer
@@ -24,61 +28,10 @@ screen = pygame.display.set_mode((500, 500))
 waypoints = [(250,0), (250,400), (350,400), (350,250), (400,250), (400,100), (550,100)]
 #used to check the previous game state so that when back button is pressed the correct screen loads
 backtrack = 0
-#money variable tracks players money
-money = 100
 #keeps track of the wave number
 wave_num = 0
-#tracks the players health
-player_health = 100
-#enemy class
-class Enemy():
-  #index used to track enemies position in list
-  def __init__(self,waypoints,image,speed,health,money_value,damage):
-    #add waypoint list to enemy class
-    self.waypoints = waypoints
-    #the first position of the enemy will be the first waypoint
-    self.pos = Vector2(self.waypoints[0])
-    #chooses the next waypoint it needs to go to
-    self.target_waypoint = 1
-    self.image = image
-    self.rect = image.get_rect()
-    self.rect.center = self.pos
-    self.x = float(self.rect.x)
-    self.speed = speed
-    self.health = health
-    self.money_value = money_value
-    self.damage = damage
-  def move(self):
-    self.health_check()
-    #defines the nextwaypoint the enemy will go to
-    self.target = Vector2(self.waypoints[self.target_waypoint])
-    #calculates displacement from the next waypoint
-    self.movement = self.target - self.pos
-    #calculate remaining distance to target
-    distance = self.movement.length()
-    #check if distance is greater the how much the enemy will move
-    if distance >= self.speed:
-      #move the enemy towards the next waypoint
-      self.pos += self.movement.normalize() * self.speed
-    else:
-      if distance != 0:
-        self.pos += self.movement.normalize() * distance
-      if len(waypoints)-1 > self.target_waypoint:
-        self.target_waypoint += 1
-    #update the center to the position that is being moved
-    self.rect.center = self.pos
-    self.draw()
-  def draw(self):
-    screen.blit(self.image,(self.rect.x,self.rect.y))
-  #checks if the enemy is still alive
-  def health_check(self):
-    global player_health, money
-    if self.health <= 0:
-      enemy_group.remove(self)
-      money += self.money_value
-    if self.pos == waypoints[len(waypoints)-1]:
-      enemy_group.remove(self)
-      player_health -= self.damage
+player_state = {"player_health": 100,
+                "money": 100}
 #tower class
 class Tower():
   def __init__(self,x,y,x2,y2,colour,range,damage,cost):
@@ -270,7 +223,8 @@ def spawn_red_enemy():
   global last_red_spawn,count
   #checks the time since the last enemy spawned
   if pygame.time.get_ticks() - last_red_spawn > 300:
-    enemy_group.append(Enemy(waypoints, red_enemy_image, 2, 20, 10,1))
+    enemy_group.append(Enemy(250, 0, 2, 20, RED, 1, 2, 100,
+                             waypoints, red_enemy_image, 10, player_state, screen))
     #sets the time the last enemy spawned to the current time
     last_red_spawn = pygame.time.get_ticks()
     count+=1
@@ -416,11 +370,11 @@ def Main_game():
   #test background
   screen.fill(BLACK)
   #define the money text
-  money_box_text = Text(("£"+str(money)), BLACK, 125, 440, 12)
+  money_box_text = Text(("£"+str(player_state["money"])), BLACK, 125, 440, 12)
   #define the wave text so changes with wave_num
   wave_text = Text(("Wave " + str(wave_num)), BLACK, 400, 25, 12)
   #define health text that changes with health
-  health_text = Text(("Health:" + str(player_health)), BLACK, 465, 25, 12)
+  health_text = Text(("Health:" + str(player_state["player_health"])), BLACK, 465, 25, 12)
    #drawing map and path boxes
   map_background.draw(screen)
   for path in path_list:
@@ -528,8 +482,8 @@ def Main_game():
   place_tower3()
   #each enemy moves
   for enemy in enemy_group:
-    enemy.move()
-  if player_health <= 0:
+    enemy.move(waypoints, enemy_group, player_state, screen)
+  if player_state["player_health"] <= 0:
     return "End game"
   #starts the waves
   wave()

@@ -1,2 +1,1 @@
-from .entities import *
-from .user_interface import *
+from . import entities, user_interface

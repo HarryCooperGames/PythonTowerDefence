@@ -1,2 +1,1 @@
-from .box import *
-from .text import *
+from . import box, text

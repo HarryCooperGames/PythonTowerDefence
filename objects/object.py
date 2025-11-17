@@ -1,4 +1,5 @@
 import pygame
+
 class Object:
     def __init__(self, colour,  x, y, w, h):
         self.x = x
