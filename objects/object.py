@@ -1,6 +1,6 @@
 import pygame
 class Object:
-    def __init__(self, x, y, w, h, colour):
+    def __init__(self, colour,  x, y, w, h):
         self.x = x
         self.y = y
         self.w = w

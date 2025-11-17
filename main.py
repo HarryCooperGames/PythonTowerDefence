@@ -4,15 +4,8 @@ import pygame
 from pygame import *
 import math
 from pygame import mixer
-#colour variables 
-black = (0,0,0)
-white = (255,255,255)
-red = (255,0,0)
-green = (0,200,0)
-blue = (0,0,255)
-yellow = (255,255,0)
-magenta = (255,0,255)
-cyan = (0,255,255)
+from objects import *
+from colours import *
 #initialise pygame
 pygame.init()
 #initialise music mixer
@@ -37,36 +30,6 @@ money = 100
 wave_num = 0
 #tracks the players health
 player_health = 100
-#box creation class
-class Box():
-  #initialise class
-  def __init__(self,colour,x,y,x2,y2): 
-    self.colour = colour
-    self.x = x
-    self.y = y
-    self.x2 = x2
-    self.y2 = y2
-    self.rect = pygame.Rect((self.x, self.y, self.x2, self.y2))
-  #box drawing function
-  def draw_box(self):
-    pygame.draw.rect(screen,self.colour,(self.x,self.y,self.x2,self.y2))
-  def draw_outline(self):
-    pygame.draw.rect(screen,self.colour,(self.x,self.y,self.x2,self.y2),10)
-class Text():
-  #initialise class
-  def __init__(self,text,text_col,x,y, size):
-    self.text = text
-    self.text_col = text_col
-    self.x = x
-    self.y = y
-    self.size = size
-  #draw text function
-  def draw_text(self):
-    text_font = pygame.font.SysFont("Arial", self.size)
-    img = text_font.render(self.text,True,self.text_col)
-    #gets the center of the text so the text can be placed in the centre easily
-    text_center = img.get_rect(center = (self.x,self.y))
-    screen.blit(img, text_center)
 #enemy class
 class Enemy():
   #index used to track enemies position in list
@@ -141,7 +104,7 @@ class Tower():
     global money
     if (self.rect.colliderect(path_1.rect)or self.rect.colliderect(path_2.rect) or self.rect.colliderect(path_3.rect)
         or self.rect.colliderect(path_4.rect) or self.rect.colliderect(path_5.rect) or self.rect.colliderect(path_6.rect)
-        or self.rect.colliderect(tower_main_outline.rect) or self.rect.colliderect(tower_main_box) or self.rect.colliderect(wave_box.rect)
+        or self.rect.colliderect(tower_main_box) or self.rect.colliderect(wave_box.rect)
         or self.rect.colliderect(health_box.rect) or self.rect.colliderect(map_border1) or self.rect.colliderect(map_border2)
         or self.rect.colliderect(map_border3)):
       print("error")
@@ -176,22 +139,22 @@ class Tower():
           dist_list = []
   def select_check(self):
     #draws the text and boxes for upgrades and sell
-    upgrade_damage_box.draw_box()
-    upgrade_range_box.draw_box()
-    sell_box.draw_box()
-    upgrade_damage_text.draw_text()
-    upgrade_range_text.draw_text()
-    sell_text.draw_text()
+    upgrade_damage_box.draw(screen)
+    upgrade_range_box.draw(screen)
+    sell_box.draw(screen)
+    upgrade_damage_text.draw_text(screen)
+    upgrade_range_text.draw_text(screen)
+    sell_text.draw_text(screen)
 #functions to make tower follow mouse until placed
 def place_tower1():
   if placing_tower1 == True:
-      pygame.draw.rect(screen, magenta, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40,))
+      pygame.draw.rect(screen, MAGENTA, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40,))
 def place_tower2():
   if placing_tower2 == True:
-    pygame.draw.rect(screen, cyan, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40)) 
+    pygame.draw.rect(screen, CYAN, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40))
 def place_tower3():
   if placing_tower3 == True:
-    pygame.draw.rect(screen, red, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40)) 
+    pygame.draw.rect(screen, RED, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40))
 #list used to store all towers
 tower_group = []
 #load images/sprites
@@ -205,94 +168,93 @@ green_enemy_image = pygame.transform.scale(green_enemy_image,(20,20))
 enemy_group = []
 #main menu stuff
 #menu title box defined
-menu_title_box = Box(white,75,50,350,125)
+menu_title_box = Box(WHITE,75,50,350,125, 10)
 #menu button list to add all the boxes too
 menu_button_list = []
 #for loop to append the different main menu boxes to the list
 for i in range(0,3):
-  menu_button_list.append(Box(white, 100, 200 + i * 100, 300, 75))
+  menu_button_list.append(Box(WHITE, 100, 200 + i * 100, 300, 75, 10))
 #title text
-menu_title_text = Text("Title",black,250,125,100)
+menu_title_text = Text("Title",BLACK,250,125,100)
 #text list
 menu_text_list = []
 #list of the text for each index of the text list
 menu_text = ["Play", "Settings", "Exit"]
 #for loop to add each piece of text to the text list
 for i in range(0,3):
-  menu_text_list.append(Text(menu_text[i], black, 250, 237.5 + i * 100, 50))
+  menu_text_list.append(Text(menu_text[i], BLACK, 250, 237.5 + i * 100, 50))
 #settings menu stuff
 #settings boxes
-settings_title = Box(white,75,50,350,125)
-settings_back = Box(white,100,400,300,75)
-volume_decrease = Box(white, 100, 200, 125,75)
-volume_increase = Box(white, 275, 200, 125,75)
+settings_title = Box(WHITE,75,50,350,125, 10)
+settings_back = Box(WHITE,100,400,300,75, 10)
+volume_decrease = Box(WHITE, 100, 200, 125,75, 10)
+volume_increase = Box(WHITE, 275, 200, 125,75, 10)
 #settings text
-settings_title_text = Text("Settings",black,250,100,80)
-settings_back_text = Text("Back",black,250,430,50)
-volume_decrease_text = Text("Volume -", black, 163, 238, 32)
-volume_increase_text = Text("Volume +", black, 338, 238, 32)
+settings_title_text = Text("Settings",BLACK,250,100,80)
+settings_back_text = Text("Back",BLACK,250,430,50)
+volume_decrease_text = Text("Volume -", BLACK, 163, 238, 32)
+volume_increase_text = Text("Volume +", BLACK, 338, 238, 32)
 #help menu stuff
-help_title = Box(white,75,50,350,125)
-help_title_text = Text("Help",black,250,100,80)
-help_back = Box(white,100,400,300,75)
-help_back_text = Text("Back",black,250,430,50)
+help_title = Box(WHITE,75,50,350,125, 10)
+help_title_text = Text("Help",WHITE,250,100,80)
+help_back = Box(WHITE,100,400,300,75, 10)
+help_back_text = Text("Back",WHITE,250,430,50)
 #help menu help text
-help_text1 = Text("Towers cannot be placed on top of one another or the enemies path or buttons",black,250,200,12)
-help_text2 = Text("When one wave is defeated the next wave begins immediately", black, 250, 220, 12)
-help_text3 = Text("Rifle tower: medium range and medium damage", black, 250, 240, 12)
-help_text4 = Text("Sniper tower: large range and low damage", black, 250, 260, 12)
-help_text5 = Text("Shotgun tower: low range and high damage", black, 250, 280, 12)
-help_text6 = Text("tower buttons must be clicked to select a tower then clicked to place", black, 250, 300, 12)
-help_text7 = Text("tower can then be clicked to select and upgrade/sell", black, 250, 320, 12)
-help_text8 = Text("any tower placed can be upgraded up to 5 times costing 100 per upgrade", black, 250, 340, 12)
+help_text1 = Text("Towers cannot be placed on top of one another or the enemies path or buttons",BLACK,250,200,12)
+help_text2 = Text("When one wave is defeated the next wave begins immediately", BLACK, 250, 220, 12)
+help_text3 = Text("Rifle tower: medium range and medium damage", BLACK, 250, 240, 12)
+help_text4 = Text("Sniper tower: large range and low damage", BLACK, 250, 260, 12)
+help_text5 = Text("Shotgun tower: low range and high damage", BLACK, 250, 280, 12)
+help_text6 = Text("tower buttons must be clicked to select a tower then clicked to place", BLACK, 250, 300, 12)
+help_text7 = Text("tower can then be clicked to select and upgrade/sell", BLACK, 250, 320, 12)
+help_text8 = Text("any tower placed can be upgraded up to 5 times costing 100 per upgrade", BLACK, 250, 340, 12)
 help_text_list = [help_text1] + [help_text2] + [help_text3] + [help_text4] + [help_text5] + [help_text6] + [help_text7] + [help_text8]
 #main game stuff
 tower_selection_boxes = []
 #tower selection boxes and outlines
-tower_main_box = Box(blue,0,0,175,500)
-tower_main_outline = Box(black,0,0,175,500)
-settings_main = Box(white, 17.5 ,420, 62.5 ,40)
-money_box = Box(white, 97.5, 420, 62.5, 40)
-wave_box = Box(white, 375, 0, 50, 50)
-health_box = Box(white, 425, 0, 75, 50)
-help_box = Box(white, 97.5, 370, 62.5,40)
+tower_main_box = Box(BLUE,0,0,175,500, 10)
+settings_main = Box(WHITE, 17.5 ,420, 62.5 ,40, 10)
+money_box = Box(WHITE, 97.5, 420, 62.5, 40, 10)
+wave_box = Box(WHITE, 375, 0, 50, 50, 10)
+health_box = Box(WHITE, 425, 0, 75, 50, 10)
+help_box = Box(WHITE, 97.5, 370, 62.5,40, 10)
 #upgrade and sell boxes
-upgrade_damage_box = Box(white, 17.5 ,320, 62.5 ,40)
-upgrade_range_box = Box(white, 17.5, 370, 62.5, 40)
-sell_box = Box(red, 97.5, 320, 62.5, 40)
+upgrade_damage_box = Box(WHITE, 17.5 ,320, 62.5 ,40, 10)
+upgrade_range_box = Box(WHITE, 17.5, 370, 62.5, 40, 10)
+sell_box = Box(RED, 97.5, 320, 62.5, 40, 10)
 #upgrade and sell text
-upgrade_damage_text = Text("damage", black, 45, 340, 12)
-upgrade_range_text = Text("range", black, 45, 390, 12)
-sell_text = Text("Sell", black, 125, 340, 12)
+upgrade_damage_text = Text("damage", BLACK, 45, 340, 12)
+upgrade_range_text = Text("range", BLACK, 45, 390, 12)
+sell_text = Text("Sell", BLACK, 125, 340, 12)
 for i in range(0,3):
-  tower_selection_boxes.append(Box(white, 17.5, 20 + i * 100, 142.5, 75))
+  tower_selection_boxes.append(Box(WHITE, 17.5, 20 + i * 100, 142.5, 75, 10))
 #main game text for boxes
 main_text_list = []
 #list for each index
 main_text = ["Rifle", "Sniper", "Shotgun"]
 for i in range(0,3):
-  main_text_list.append(Text(main_text[i], black, 85, 40 + i * 100, 32))
-settings_main_text = Text("Settings", black, 45, 440, 12)
+  main_text_list.append(Text(main_text[i], BLACK, 85, 40 + i * 100, 32))
+settings_main_text = Text("Settings", BLACK, 45, 440, 12)
 main_text_list.append(settings_main_text)
 #help text
-help_text = Text("HELP", black, 125, 390, 12)
+help_text = Text("HELP", BLACK, 125, 390, 12)
 main_text_list.append(help_text)
 #tower cost text
 tower_cost_text = ["£50", "£150", "£300"]
 for i in range(0,3):
-  main_text_list.append(Text(tower_cost_text[i], black, 85, 80 + i*100, 12))
+  main_text_list.append(Text(tower_cost_text[i], BLACK, 85, 80 + i*100, 12))
 #map and pathway boxes
-map_background = Box(green,175,0,500,500)
-map_border1 = Box(black,0,0,500,-1)
-map_border2 = Box(black,501,-1,1,501)
-map_border3 = Box(black,0,501,501,1)
+map_background = Box(GREEN,175,0,500,500, 10)
+map_border1 = Box(BLACK,0,0,500,-1, 10)
+map_border2 = Box(BLACK,501,-1,1,501, 10)
+map_border3 = Box(BLACK,0,501,501,1, 10)
 path_list = []
-path_1 = Box(yellow, waypoints[0][0]-10, waypoints[0][1], 20, waypoints[1][1]-waypoints[0][1])
-path_2 = Box(yellow, waypoints[1][0]-10, waypoints[1][1]-10, waypoints[2][0]-waypoints[1][0]+10, 20)
-path_3 = Box(yellow, waypoints[2][0]-10, waypoints[3][1], 20, waypoints[2][1]-waypoints[3][1]+10)
-path_4 = Box(yellow, waypoints[3][0]-10, waypoints[3][1]-10, waypoints[4][0]-waypoints[3][0]+10, 20)
-path_5 = Box(yellow, waypoints[4][0]-10, waypoints[5][1], 20, waypoints[4][1]-waypoints[5][1]+10)
-path_6 = Box(yellow, waypoints[5][0]-10, waypoints[5][1]-10, waypoints[6][0]-waypoints[5][0]+10, 20)
+path_1 = Box(YELLOW, waypoints[0][0]-10, waypoints[0][1], 20, waypoints[1][1]-waypoints[0][1], 10)
+path_2 = Box(YELLOW, waypoints[1][0]-10, waypoints[1][1]-10, waypoints[2][0]-waypoints[1][0]+10, 20, 10)
+path_3 = Box(YELLOW, waypoints[2][0]-10, waypoints[3][1], 20, waypoints[2][1]-waypoints[3][1]+10, 10)
+path_4 = Box(YELLOW, waypoints[3][0]-10, waypoints[3][1]-10, waypoints[4][0]-waypoints[3][0]+10, 20, 10)
+path_5 = Box(YELLOW, waypoints[4][0]-10, waypoints[5][1], 20, waypoints[4][1]-waypoints[5][1]+10, 10)
+path_6 = Box(YELLOW, waypoints[5][0]-10, waypoints[5][1]-10, waypoints[6][0]-waypoints[5][0]+10, 20, 10)
 path_list = path_list + [path_1] + [path_2] + [path_3] + [path_4] + [path_5] + [path_6]
 #variables to check if the user is placing towers
 placing_tower1 = False
@@ -384,30 +346,30 @@ state = "Main menu"
 def Settings():
   global volume
   #background
-  screen.fill(blue)
+  screen.fill(BLUE)
   #drawing boxes
-  settings_title.draw_box()
-  settings_back.draw_box()
-  volume_decrease.draw_box()
-  volume_increase.draw_box()
+  settings_title.draw(screen)
+  settings_back.draw(screen)
+  volume_decrease.draw(screen)
+  volume_increase.draw(screen)
   #drawing text
-  settings_title_text.draw_text()
-  settings_back_text.draw_text()
-  volume_decrease_text.draw_text()
-  volume_increase_text.draw_text()
+  settings_title_text.draw_text(screen)
+  settings_back_text.draw_text(screen)
+  volume_decrease_text.draw_text(screen)
+  volume_increase_text.draw_text(screen)
   #button colour change
   if settings_back.rect.colliderect(mouse_rect):
-    settings_back.colour = red
+    settings_back.colour = RED
   if not settings_back.rect.colliderect(mouse_rect):
-    settings_back.colour = white
+    settings_back.colour = WHITE
   if volume_decrease.rect.colliderect(mouse_rect):
-    volume_decrease.colour = red
+    volume_decrease.colour = RED
   if not volume_decrease.rect.colliderect(mouse_rect):
-    volume_decrease.colour = white
+    volume_decrease.colour = WHITE
   if volume_increase.rect.colliderect(mouse_rect):
-    volume_increase.colour = red
+    volume_increase.colour = RED
   if not volume_increase.rect.colliderect(mouse_rect):
-    volume_increase.colour = white
+    volume_increase.colour = WHITE
   #button collision
   for event in pygame.event.get():
     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -428,17 +390,17 @@ def Settings():
   return "Settings"
 #help function
 def Help():
-  screen.fill(blue)
-  help_back.draw_box()
-  help_back_text.draw_text()
-  help_title.draw_box()
-  help_title_text.draw_text()
+  screen.fill(BLUE)
+  help_back.draw(screen)
+  help_back_text.draw_text(screen)
+  help_title.draw(screen)
+  help_title_text.draw_text(screen)
   for text in help_text_list:
-    text.draw_text()
+    text.draw_text(screen)
   if help_back.rect.colliderect(mouse_rect):
-    help_back.colour = red
+    help_back.colour = RED
   if not help_back.rect.colliderect(mouse_rect):
-    help_back.colour = white
+    help_back.colour = WHITE
   #button collision
   for event in pygame.event.get():
     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -452,48 +414,48 @@ def Help():
 def Main_game():
   global money, wave_num, placing_tower1, placing_tower2, placing_tower3
   #test background
-  screen.fill(black)
+  screen.fill(BLACK)
   #define the money text
-  money_box_text = Text(("£"+str(money)), black, 125, 440, 12)
+  money_box_text = Text(("£"+str(money)), BLACK, 125, 440, 12)
   #define the wave text so changes with wave_num
-  wave_text = Text(("Wave " + str(wave_num)), black, 400, 25, 12)
+  wave_text = Text(("Wave " + str(wave_num)), BLACK, 400, 25, 12)
   #define health text that changes with health
-  health_text = Text(("Health:" + str(player_health)), black, 465, 25, 12)
+  health_text = Text(("Health:" + str(player_health)), BLACK, 465, 25, 12)
    #drawing map and path boxes
-  map_background.draw_box()
+  map_background.draw(screen)
   for path in path_list:
-    path.draw_box()
+    path.draw(screen)
   #draw each tower
   for tower in tower_group:
     tower.hitbox_check()
     if tower.selected == True:
-      pygame.draw.rect(screen, white, (tower.x-tower.range, tower.y-tower.range, tower.x2+2*tower.range, tower.y2+2*tower.range))
+      pygame.draw.rect(screen, WHITE, (tower.x-tower.range, tower.y-tower.range, tower.x2+2*tower.range, tower.y2+2*tower.range))
   for tower in tower_group:
     tower.draw_tower()
   #drawing tower boxes and outlines
-  tower_main_box.draw_box()
-  tower_main_outline.draw_outline()
+  tower_main_box.draw(screen)
+  tower_main_box.draw_outline(screen)
   #draw help box
-  help_box.draw_box()
+  help_box.draw(screen)
   for tower in tower_group:
     #if the tower is clicked it runs the method for the tower being selected
     if tower.selected == True:
       tower.select_check()
-  settings_main.draw_box()
-  money_box.draw_box()
+  settings_main.draw(screen)
+  money_box.draw(screen)
   for box in tower_selection_boxes:
-    box.draw_box()
+    box.draw(screen)
   #draw text
   for text in main_text_list:
-    text.draw_text()
+    text.draw_text(screen)
   #money text value
-  money_box_text.draw_text()
+  money_box_text.draw_text(screen)
   #wave text value and box 
-  wave_box.draw_box()
-  wave_text.draw_text()
+  wave_box.draw(screen)
+  wave_text.draw_text(screen)
   #health box and value
-  health_box.draw_box()
-  health_text.draw_text()
+  health_box.draw(screen)
+  health_text.draw_text(screen)
   #collisions with tower boxes
   for event in pygame.event.get():
     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -519,7 +481,7 @@ def Main_game():
               tower.cost += 100
           elif tower.selected == True and sell_box.rect.colliderect(mouse_rect):
             #prevents the player losing all of their money
-            if tower.colour == magenta:
+            if tower.colour == MAGENTA:
               money += tower.cost
             else:
               money += 0.8 * tower.cost
@@ -531,15 +493,15 @@ def Main_game():
         #checks if a tower can be placed and places it
         if placing_tower1 == True:
           placing_tower1 = False
-          tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, magenta,50,1,50))
+          tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, MAGENTA,50,1,50))
           money -= tower_group[len(tower_group)-1].cost
         if placing_tower2 == True:
           placing_tower2 = False
-          tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, cyan,150,0.5,150))
+          tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, CYAN,150,0.5,150))
           money -= tower_group[len(tower_group)-1].cost
         if placing_tower3 == True:
           placing_tower3 = False
-          tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, red,25,3,300))
+          tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, RED,25,3,300))
           money -= tower_group[len(tower_group)-1].cost
         if settings_main.rect.collidepoint(event.pos):
           return "Settings"
@@ -577,23 +539,23 @@ def Main_game():
 #main menu function
 def Main_menu():
   #background
-  screen.fill(blue)
+  screen.fill(BLUE)
   #draw boxes
   #title box drawn
-  menu_title_box.draw_box()
+  menu_title_box.draw(screen)
   #for loop to draw the other menu boxes
   for button in menu_button_list:
-    button.draw_box()
+    button.draw(screen)
   #draw text
-  menu_title_text.draw_text()
+  menu_title_text.draw_text(screen)
   for text in menu_text_list:
-    text.draw_text()
+    text.draw_text(screen)
   #collision colour changes for each box
   for button in menu_button_list:
     if button.rect.colliderect(mouse_rect):
-      button.colour = red
+      button.colour = RED
     if not button.rect.colliderect(mouse_rect):
-      button.colour = white
+      button.colour = WHITE
   #collisions
   for event in pygame.event.get():
     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -610,7 +572,7 @@ def Main_menu():
   return "Main menu"
 #the screen for when the game has ended
 def End_game():
-  screen.fill(black)
+  screen.fill(BLACK)
   return "End game"
 #game running loop
 while True:
