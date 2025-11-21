@@ -5,16 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e322afd4-4db6-4484-909c-00c2736b49d2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ui/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ui/help_ui.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ui/main_ui.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ui/menu_ui.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ui/settings_ui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objects/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objects/entities/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects/entities/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objects/entities/enemy.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects/entities/enemy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/objects/entities/tower.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects/entities/tower.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objects/object.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects/object.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objects/user_interface/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects/user_interface/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/__init__.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

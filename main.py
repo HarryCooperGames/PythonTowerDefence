@@ -10,6 +10,10 @@ from objects.user_interface.box import Box
 from objects.user_interface.text import Text
 from objects.entities.enemy import Enemy
 from objects.entities.tower import Tower
+
+from ui.main_ui import *
+from ui.menu_ui import *
+
 #initialise pygame
 pygame.init()
 #initialise music mixer
@@ -24,90 +28,38 @@ mixer.music.set_volume(volume)
 clock = pygame.time.Clock()
 clock.tick(30)
 screen = pygame.display.set_mode((500, 500))
-#points that the enemies travel to and from
-waypoints = [(250,0), (250,400), (350,400), (350,250), (400,250), (400,100), (550,100)]
 #used to check the previous game state so that when back button is pressed the correct screen loads
 backtrack = 0
 #keeps track of the wave number
 wave_num = 0
 player_state = {"player_health": 100,
                 "money": 100}
-#tower class
-class Tower():
-  def __init__(self,x,y,x2,y2,colour,range,damage,cost):
-    self.x = x 
-    self.y = y
-    self.x2 = x2
-    self.y2 = y2
-    self.colour = colour
-    self.rect = pygame.Rect((x,y,x2,y2))
-    self.range = range
-    self.hitbox = pygame.Rect((x-self.range, y-self.range, x2+2*self.range, y2+2*self.range))
-    self.damage = damage
-    #checks which enemy the tower will attack
-    self.target = None
-    #checks if the tower is selected
-    self.selected = False
-    #checks how many upgrades the tower has
-    self.upgrade_count = 0
-    #checks the initial cost of the tower which can be increased by upgrades
-    self.cost = cost
-  #draws tower on screen
-  def draw_tower(self):
-    global money
-    if (self.rect.colliderect(path_1.rect)or self.rect.colliderect(path_2.rect) or self.rect.colliderect(path_3.rect)
-        or self.rect.colliderect(path_4.rect) or self.rect.colliderect(path_5.rect) or self.rect.colliderect(path_6.rect)
-        or self.rect.colliderect(tower_main_box) or self.rect.colliderect(wave_box.rect)
-        or self.rect.colliderect(health_box.rect) or self.rect.colliderect(map_border1) or self.rect.colliderect(map_border2)
-        or self.rect.colliderect(map_border3)):
-      print("error")
-      tower_group.remove(self)
-      money += self.cost
-    for tower in tower_group:
-      if self != tower:
-        if self.rect.colliderect(tower):
-          tower_group.remove(tower)
-          money += self.cost
-    pygame.draw.rect(screen, self.colour, (self.x, self.y, self.x2, self.y2))
-  #checks if an enemy collides with the towers hitbox
-  def hitbox_check(self):
-    for enemy in enemy_group:
-      if enemy.rect.colliderect(self.hitbox) and enemy == self.target_enemy():
-        self.target_enemy().health -= self.damage
-  #targets one enemy that is closest to the tower
-  def target_enemy(self):
-    x = self.rect.center[0]
-    y = self.rect.center[1]
-    dist_list = []
-    for enemy in enemy_group:
-      x_dist = enemy.pos[0]- x
-      y_dist = enemy.pos[1]- y
-      #finds the enemies distance from the tower
-      dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
-      dist_list.append(dist)
-      if dist == min(dist_list):
-        if enemy.rect.colliderect(self.hitbox):
-          return enemy
-        else:
-          dist_list = []
-  def select_check(self):
-    #draws the text and boxes for upgrades and sell
+
+
+def select_check(self):
+    # draws the text and boxes for upgrades and sell
     upgrade_damage_box.draw(screen)
     upgrade_range_box.draw(screen)
     sell_box.draw(screen)
     upgrade_damage_text.draw_text(screen)
     upgrade_range_text.draw_text(screen)
     sell_text.draw_text(screen)
-#functions to make tower follow mouse until placed
+
+
+# functions to make tower follow mouse until placed
 def place_tower1():
-  if placing_tower1 == True:
-      pygame.draw.rect(screen, MAGENTA, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40,))
+    if placing_tower1 == True:
+        pygame.draw.rect(screen, MAGENTA, (mouse_pos[0] - 20, mouse_pos[1] - 20, 40, 40,))
+
+
 def place_tower2():
-  if placing_tower2 == True:
-    pygame.draw.rect(screen, CYAN, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40))
+    if placing_tower2 == True:
+        pygame.draw.rect(screen, CYAN, (mouse_pos[0] - 20, mouse_pos[1] - 20, 40, 40))
+
+
 def place_tower3():
-  if placing_tower3 == True:
-    pygame.draw.rect(screen, RED, (mouse_pos[0]-20, mouse_pos[1]-20, 40, 40))
+    if placing_tower3 == True:
+        pygame.draw.rect(screen, RED, (mouse_pos[0] - 20, mouse_pos[1] - 20, 40, 40))
 #list used to store all towers
 tower_group = []
 #load images/sprites
@@ -119,96 +71,6 @@ green_enemy_image = pygame.image.load("Green_Balloon.webp").convert_alpha()
 green_enemy_image = pygame.transform.scale(green_enemy_image,(20,20))
 #enemy group to add enemies to and display it
 enemy_group = []
-#main menu stuff
-#menu title box defined
-menu_title_box = Box(WHITE,75,50,350,125, 10)
-#menu button list to add all the boxes too
-menu_button_list = []
-#for loop to append the different main menu boxes to the list
-for i in range(0,3):
-  menu_button_list.append(Box(WHITE, 100, 200 + i * 100, 300, 75, 10))
-#title text
-menu_title_text = Text("Title",BLACK,250,125,100)
-#text list
-menu_text_list = []
-#list of the text for each index of the text list
-menu_text = ["Play", "Settings", "Exit"]
-#for loop to add each piece of text to the text list
-for i in range(0,3):
-  menu_text_list.append(Text(menu_text[i], BLACK, 250, 237.5 + i * 100, 50))
-#settings menu stuff
-#settings boxes
-settings_title = Box(WHITE,75,50,350,125, 10)
-settings_back = Box(WHITE,100,400,300,75, 10)
-volume_decrease = Box(WHITE, 100, 200, 125,75, 10)
-volume_increase = Box(WHITE, 275, 200, 125,75, 10)
-#settings text
-settings_title_text = Text("Settings",BLACK,250,100,80)
-settings_back_text = Text("Back",BLACK,250,430,50)
-volume_decrease_text = Text("Volume -", BLACK, 163, 238, 32)
-volume_increase_text = Text("Volume +", BLACK, 338, 238, 32)
-#help menu stuff
-help_title = Box(WHITE,75,50,350,125, 10)
-help_title_text = Text("Help",WHITE,250,100,80)
-help_back = Box(WHITE,100,400,300,75, 10)
-help_back_text = Text("Back",WHITE,250,430,50)
-#help menu help text
-help_text1 = Text("Towers cannot be placed on top of one another or the enemies path or buttons",BLACK,250,200,12)
-help_text2 = Text("When one wave is defeated the next wave begins immediately", BLACK, 250, 220, 12)
-help_text3 = Text("Rifle tower: medium range and medium damage", BLACK, 250, 240, 12)
-help_text4 = Text("Sniper tower: large range and low damage", BLACK, 250, 260, 12)
-help_text5 = Text("Shotgun tower: low range and high damage", BLACK, 250, 280, 12)
-help_text6 = Text("tower buttons must be clicked to select a tower then clicked to place", BLACK, 250, 300, 12)
-help_text7 = Text("tower can then be clicked to select and upgrade/sell", BLACK, 250, 320, 12)
-help_text8 = Text("any tower placed can be upgraded up to 5 times costing 100 per upgrade", BLACK, 250, 340, 12)
-help_text_list = [help_text1] + [help_text2] + [help_text3] + [help_text4] + [help_text5] + [help_text6] + [help_text7] + [help_text8]
-#main game stuff
-tower_selection_boxes = []
-#tower selection boxes and outlines
-tower_main_box = Box(BLUE,0,0,175,500, 10)
-settings_main = Box(WHITE, 17.5 ,420, 62.5 ,40, 10)
-money_box = Box(WHITE, 97.5, 420, 62.5, 40, 10)
-wave_box = Box(WHITE, 375, 0, 50, 50, 10)
-health_box = Box(WHITE, 425, 0, 75, 50, 10)
-help_box = Box(WHITE, 97.5, 370, 62.5,40, 10)
-#upgrade and sell boxes
-upgrade_damage_box = Box(WHITE, 17.5 ,320, 62.5 ,40, 10)
-upgrade_range_box = Box(WHITE, 17.5, 370, 62.5, 40, 10)
-sell_box = Box(RED, 97.5, 320, 62.5, 40, 10)
-#upgrade and sell text
-upgrade_damage_text = Text("damage", BLACK, 45, 340, 12)
-upgrade_range_text = Text("range", BLACK, 45, 390, 12)
-sell_text = Text("Sell", BLACK, 125, 340, 12)
-for i in range(0,3):
-  tower_selection_boxes.append(Box(WHITE, 17.5, 20 + i * 100, 142.5, 75, 10))
-#main game text for boxes
-main_text_list = []
-#list for each index
-main_text = ["Rifle", "Sniper", "Shotgun"]
-for i in range(0,3):
-  main_text_list.append(Text(main_text[i], BLACK, 85, 40 + i * 100, 32))
-settings_main_text = Text("Settings", BLACK, 45, 440, 12)
-main_text_list.append(settings_main_text)
-#help text
-help_text = Text("HELP", BLACK, 125, 390, 12)
-main_text_list.append(help_text)
-#tower cost text
-tower_cost_text = ["£50", "£150", "£300"]
-for i in range(0,3):
-  main_text_list.append(Text(tower_cost_text[i], BLACK, 85, 80 + i*100, 12))
-#map and pathway boxes
-map_background = Box(GREEN,175,0,500,500, 10)
-map_border1 = Box(BLACK,0,0,500,-1, 10)
-map_border2 = Box(BLACK,501,-1,1,501, 10)
-map_border3 = Box(BLACK,0,501,501,1, 10)
-path_list = []
-path_1 = Box(YELLOW, waypoints[0][0]-10, waypoints[0][1], 20, waypoints[1][1]-waypoints[0][1], 10)
-path_2 = Box(YELLOW, waypoints[1][0]-10, waypoints[1][1]-10, waypoints[2][0]-waypoints[1][0]+10, 20, 10)
-path_3 = Box(YELLOW, waypoints[2][0]-10, waypoints[3][1], 20, waypoints[2][1]-waypoints[3][1]+10, 10)
-path_4 = Box(YELLOW, waypoints[3][0]-10, waypoints[3][1]-10, waypoints[4][0]-waypoints[3][0]+10, 20, 10)
-path_5 = Box(YELLOW, waypoints[4][0]-10, waypoints[5][1], 20, waypoints[4][1]-waypoints[5][1]+10, 10)
-path_6 = Box(YELLOW, waypoints[5][0]-10, waypoints[5][1]-10, waypoints[6][0]-waypoints[5][0]+10, 20, 10)
-path_list = path_list + [path_1] + [path_2] + [path_3] + [path_4] + [path_5] + [path_6]
 #variables to check if the user is placing towers
 placing_tower1 = False
 placing_tower2 = False
@@ -447,32 +309,32 @@ def Main_game():
         #checks if a tower can be placed and places it
         if placing_tower1 == True:
           placing_tower1 = False
-          tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, MAGENTA,50,1,50))
-          money -= tower_group[len(tower_group)-1].cost
+          tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, MAGENTA,50,1,1, 50))
+          player_state["money"] -= tower_group[len(tower_group)-1].cost
         if placing_tower2 == True:
           placing_tower2 = False
           tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, CYAN,150,0.5,150))
-          money -= tower_group[len(tower_group)-1].cost
+          player_state["money"] -= tower_group[len(tower_group)-1].cost
         if placing_tower3 == True:
           placing_tower3 = False
           tower_group.append(Tower(mouse_pos[0]-20, mouse_pos[1]-20, 40, 40, RED,25,3,300))
-          money -= tower_group[len(tower_group)-1].cost
+          player_state["money"] -= tower_group[len(tower_group)-1].cost
         if settings_main.rect.collidepoint(event.pos):
           return "Settings"
         if help_box.rect.collidepoint(event.pos):
           return "Help"
         if tower_selection_boxes[0].rect.collidepoint(event.pos):
-          if money >= 50:
+          if player_state["money"] >= 50:
             placing_tower1 = True
           else:
             print("not enough money")
         if tower_selection_boxes[1].rect.collidepoint(event.pos):
-          if money >= 150:
+          if player_state["money"] >= 150:
             placing_tower2 = True
           else:
             print("not enough money")
         if tower_selection_boxes[2].rect.collidepoint(event.pos):
-          if money >= 300:
+          if player_state["money"] >= 300:
             placing_tower3 = True
           else:
             print("not enough money")
